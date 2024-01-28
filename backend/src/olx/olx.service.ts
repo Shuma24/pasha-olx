@@ -22,29 +22,37 @@ export class OlxService implements IOlxService {
       const redirectUrl = this._configService.get('OLX_REDIRECT_URL');
       const clientSecret = this._configService.get('OLX_CLIENT_SECRET');
 
-      console.log(clientId);
-      console.log(redirectUrl);
-      console.log(clientSecret);
+      console.log(code);
 
-      const { data } = await this._clientService.POST<{
+      const response = await this._clientService.POST<{
         access_token: string;
         expires_in: number;
         token_type: string;
         scope: string;
         refresh_token: string;
-      }>('https://www.olx.ua/api/open/oauth/token', {
-        data: {
-          grant_type: 'authorization_code',
-          client_id: clientId,
-          client_secret: clientSecret,
-          code: code.trim(),
-          redirect_uri: redirectUrl,
+      }>(
+        'https://www.olx.ua/api/open/oauth/token',
+        {
+          data: {
+            grant_type: 'authorization_code',
+            client_id: clientId.trim(),
+            client_secret: clientSecret.trim(),
+            code: code.trim(),
+            redirect_uri: redirectUrl.trim(),
+          },
         },
-      });
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+            Connection: 'keep-alive',
+          },
+        },
+      );
 
-      console.log(data);
+      console.log(response);
 
-      if (!data) throw new Error('Problems with olx /auth/token');
+      if (!response.data) throw new Error('Problems with olx /auth/token');
 
       const olxCred = await this._olxRepository.get({ adminId: adminId });
 
@@ -54,9 +62,9 @@ export class OlxService implements IOlxService {
       const credentials = await this._olxRepository.update(
         {
           adminId: olxCred.adminId,
-          olxRefreshToken: data.refresh_token,
-          olxToken: data.access_token,
-          expires_in: data.expires_in.toString(),
+          olxRefreshToken: response.data.refresh_token,
+          olxToken: response.data.access_token,
+          expires_in: response.data.expires_in.toString(),
         },
         olxCred.id,
       );
