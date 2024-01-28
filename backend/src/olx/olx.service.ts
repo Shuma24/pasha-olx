@@ -1,13 +1,11 @@
 import { IClientService } from '../common/client-service/client.service';
 import { IConfigService } from '../common/config-service/config.service';
 import { ILoggerService } from '../common/logger-service/logger.service';
-import { OlxCredEntity } from './entity/olx.credentials.entity';
-import { createOlxLoginLink, createTokenUrl } from './helpers/url-generate';
+import { IOlxCredentialsEntity } from './entity/olx.credentials.entity';
 import { IOlxRepository } from './repository/olx.repository';
 
 export interface IOlxService {
-  loginPageOlx(): Promise<string>;
-  callbackOlx(code: string, adminId: number): Promise<string | undefined>;
+  callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined>;
 }
 
 export class OlxService implements IOlxService {
@@ -18,18 +16,7 @@ export class OlxService implements IOlxService {
     private readonly _loggerService: ILoggerService,
   ) {}
 
-  async loginPageOlx(): Promise<string> {
-    const clientId = this._configService.get('OLX_CLIENT_ID');
-    const redirectUrl = this._configService.get('OLX_REDIRECT_URL');
-
-    if (!clientId || !redirectUrl) throw new Error('ClientId or CallbackUrl olx not set.');
-
-    const olxLoginUrl = createOlxLoginLink(clientId, redirectUrl);
-
-    return olxLoginUrl;
-  }
-
-  async callbackOlx(code: string, adminId: number): Promise<string | undefined> {
+  async callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined> {
     try {
       const clientId = this._configService.get('OLX_CLIENT_ID');
       const redirectUrl = this._configService.get('OLX_REDIRECT_URL');
@@ -59,7 +46,7 @@ export class OlxService implements IOlxService {
       if (!olxCred)
         throw new Error('Cant set access_token olx to db because olx credentials is required.');
 
-      await this._olxRepository.update(
+      const credentials = await this._olxRepository.update(
         {
           adminId: olxCred.adminId,
           olxRefreshToken: data.refresh_token,
@@ -69,7 +56,9 @@ export class OlxService implements IOlxService {
         olxCred.id,
       );
 
-      return homePage;
+      if (!credentials) return undefined;
+
+      return credentials;
     } catch (error) {
       if (error instanceof Error) {
         this._loggerService.error(error.message);

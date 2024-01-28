@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox';
 
-export const callbackQueryDto = Type.Object({
+export const callbackBodyDto = Type.Object({
   code: Type.String(),
 });
 
-export type callBackQueryDto = Static<typeof callbackQueryDto>;
+export type callbackBodyDto = Static<typeof callbackBodyDto>;
