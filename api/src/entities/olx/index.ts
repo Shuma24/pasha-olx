@@ -1,1 +1,1 @@
-export { useOlxCallback } from './queries';
+export { useOlxExchange } from './queries';

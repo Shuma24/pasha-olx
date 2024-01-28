@@ -4,7 +4,11 @@ export function useOlxAuthLink() {
   olxUrl.searchParams.append('redirect_uri', process.env.NEXT_PUBLIC_CALLBACK as string);
   olxUrl.searchParams.append('response_type', 'code');
 
+  const handleClick = () => {
+    window.location.href = olxUrl.toString();
+  };
+
   return {
-    url: olxUrl,
+    handle: handleClick,
   };
 }

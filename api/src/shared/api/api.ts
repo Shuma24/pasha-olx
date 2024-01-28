@@ -30,6 +30,14 @@ export interface ITokenExchangeResponse {
   status: boolean;
 }
 
+export interface IOlxCredentialsResponse {
+  id: number;
+  olxToken: string;
+  olxRefreshToken: string;
+  expires_in: string;
+  adminId: number;
+}
+
 type SecondParameter<T extends (...args: any) => any> = T extends (
   config: any,
   args: infer P,
@@ -80,10 +88,21 @@ export const TokenExchange = async (
   );
 };
 
+export const getOlxCredentials = async (options?: SecondParameter<typeof createInstance>) => {
+  return createInstance<IOlxCredentialsResponse>(
+    {
+      url: '/olx/get',
+      method: 'get',
+      headers: { 'Content-Type': 'application/json' },
+    },
+    options,
+  );
+};
+
 export type AuthControllerSignInResult = NonNullable<
   Awaited<ReturnType<typeof authControllerSignIn>>
 >;
 
 export type saveToken = NonNullable<Awaited<ReturnType<typeof TokenExchange>>>;
-
+export type getOlxCredentials = NonNullable<Awaited<ReturnType<typeof getOlxCredentials>>>;
 export type authControllerMe = NonNullable<Awaited<ReturnType<typeof authControllerMe>>>;

@@ -6,6 +6,7 @@ import { IOlxRepository } from './repository/olx.repository';
 
 export interface IOlxService {
   callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined>;
+  get(adminId: number): Promise<IOlxCredentialsEntity | null>;
 }
 
 export class OlxService implements IOlxService {
@@ -15,6 +16,10 @@ export class OlxService implements IOlxService {
     private readonly _olxRepository: IOlxRepository,
     private readonly _loggerService: ILoggerService,
   ) {}
+
+  async get(adminId: number) {
+    return await this._olxRepository.get({ adminId: Number(adminId) });
+  }
 
   async callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined> {
     try {

@@ -4,7 +4,11 @@ import { useOlxAuthLink } from '../model/use-olx-link';
 import Link from 'next/link';
 
 export const OlxLoginButton = () => {
-  const { url } = useOlxAuthLink();
+  const { handle } = useOlxAuthLink();
 
-  return <Link href={url}>OLX</Link>;
+  return (
+    <UiButton variant='secondary' onClick={handle}>
+      Olx Login
+    </UiButton>
+  );
 };
