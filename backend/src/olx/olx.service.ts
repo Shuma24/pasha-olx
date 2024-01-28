@@ -3,14 +3,10 @@ import { IConfigService } from '../common/config-service/config.service';
 import { ILoggerService } from '../common/logger-service/logger.service';
 import { IOlxCredentialsEntity } from './entity/olx.credentials.entity';
 import { IOlxRepository } from './repository/olx.repository';
+import queryString from 'querystring';
 
 export interface IOlxService {
-  callbackOlx(
-    access_token: string,
-    expires_in: number,
-    refresh_token: string,
-    adminId: number,
-  ): Promise<IOlxCredentialsEntity | undefined>;
+  callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined>;
 }
 
 export class OlxService implements IOlxService {
@@ -21,13 +17,34 @@ export class OlxService implements IOlxService {
     private readonly _loggerService: ILoggerService,
   ) {}
 
-  async callbackOlx(
-    access_token: string,
-    expires_in: number,
-    refresh_token: string,
-    adminId: number,
-  ): Promise<IOlxCredentialsEntity | undefined> {
+  async callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined> {
     try {
+      const clientId = this._configService.get('OLX_CLIENT_ID');
+      const redirectUrl = this._configService.get('OLX_REDIRECT_URL');
+      const clientSecret = this._configService.get('OLX_CLIENT_SECRET');
+
+      console.log(code);
+
+      const response = await fetch('https://www.olx.ua/api/open/oauth/token', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: queryString.stringify({
+          grant_type: 'authorization_code',
+          client_id: clientId,
+          client_secret: clientSecret,
+          code: code,
+          redirect_uri: redirectUrl,
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (!data) throw new Error('Problems with olx /auth/token');
+
       const olxCred = await this._olxRepository.get({ adminId: adminId });
 
       if (!olxCred)
@@ -36,9 +53,9 @@ export class OlxService implements IOlxService {
       const credentials = await this._olxRepository.update(
         {
           adminId: olxCred.adminId,
-          olxRefreshToken: refresh_token,
-          olxToken: access_token,
-          expires_in: expires_in.toString(),
+          olxRefreshToken: data.refresh_token,
+          olxToken: data.access_token,
+          expires_in: data.expires_in.toString(),
         },
         olxCred.id,
       );

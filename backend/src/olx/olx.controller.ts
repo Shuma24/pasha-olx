@@ -27,16 +27,12 @@ export class OlxController extends BaseController {
       return;
     }
 
+    const { code } = req.body;
     const { id } = req.user;
 
-    const { access_token, refresh_token, expires_in } = req.body;
+    console.log(code);
 
-    const credentials = await this._olxService.callbackOlx(
-      access_token,
-      expires_in,
-      refresh_token,
-      id,
-    );
+    const credentials = await this._olxService.callbackOlx(code, id);
 
     if (!credentials) {
       reply.code(400).send({ status: false, error: 'Problem with save olx token in callback' });
