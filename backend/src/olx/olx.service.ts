@@ -21,7 +21,6 @@ export class OlxService implements IOlxService {
       const clientId = this._configService.get('OLX_CLIENT_ID');
       const redirectUrl = this._configService.get('OLX_REDIRECT_URL');
       const clientSecret = this._configService.get('OLX_CLIENT_SECRET');
-      const homePage = this._configService.get('FRONT_HOME_PAGE');
 
       const { data } = await this._clientService.POST<{
         access_token: string;

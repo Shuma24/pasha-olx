@@ -4,18 +4,24 @@ import React from 'react';
 
 const links = [
   { id: 1, href: ROUTER_PATHS.HOME, label: 'HOME' },
-  { id: 2, href: ROUTER_PATHS.PROFILE, label: 'Profile' },
-  { id: 3, href: ROUTER_PATHS.OLX, label: 'Olx' },
+  { id: 2, href: ROUTER_PATHS.PROFILE, label: 'PROFILE' },
+  { id: 3, href: ROUTER_PATHS.OLX, label: 'OLX' },
+  { id: 4, href: ROUTER_PATHS.PRODUCTS, label: 'PRODUCTS' },
 ];
 
 export const AsideWidgets = () => {
   return (
-    <aside className='px-5 pt-10'>
-      {links.map((el) => (
-        <UiLink href={el.href} key={el.id}>
-          {el.label}
-        </UiLink>
-      ))}
+    <aside className='bg-gray-100 p-4 rounded-lg shadow-md'>
+      <div className='flex gap-2 items-center justify-center flex-row'>
+        {links.map((el) => (
+          <UiLink
+            href={el.href}
+            key={el.id}
+            className='text-black p-0 hover:text-blue-700 hover:underline transition duration-300'>
+            {el.label}
+          </UiLink>
+        ))}
+      </div>
     </aside>
   );
 };

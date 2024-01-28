@@ -1,13 +1,15 @@
-import { getOlxAuthLink } from '@/src/shared/api/api';
+import { exchangeCodeForToken } from '@/src/shared/api/api';
 import { useQuery } from '@tanstack/react-query';
 
-const key = ['olxLoginPage'];
+const key = ['olxCallback'];
 
-export const useLoginOlxPageQuery = () => {
+export const useOlxCallback = (code: string) => {
   return useQuery({
     queryKey: key,
-    queryFn: getOlxAuthLink,
+    queryFn: async () => {
+      const data = exchangeCodeForToken({ code: code });
+      return data;
+    },
     retry: 0,
-    staleTime: 5 * 60 * 1000,
   });
 };

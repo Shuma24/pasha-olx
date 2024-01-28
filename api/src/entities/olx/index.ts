@@ -1,1 +1,1 @@
-export { useLoginOlxPageQuery } from './queries';
+export { useOlxCallback } from './queries';

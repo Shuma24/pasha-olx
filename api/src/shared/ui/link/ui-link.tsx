@@ -7,7 +7,7 @@ export const UiLink = ({ className, ...props }: UiLinkProps) => {
   return (
     <Link
       {...props}
-      className={clsx(className, 'p-1 text-black hover:text-teal-600 cursor-pointer')}
+      className={clsx(className, ' text-black hover:text-teal-600 cursor-pointer')}
     />
   );
 };
