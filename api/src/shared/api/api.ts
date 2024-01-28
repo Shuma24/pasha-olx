@@ -1,4 +1,5 @@
 import { BodyType, clearApiInstance, createInstance } from './api-instance';
+import queryString from 'querystring';
 
 export interface SignInBodyDto {
   login: string;
@@ -88,20 +89,20 @@ export const exchangeOlxCode = async (code: string) => {
     refresh_token: string;
   }>(
     'https://www.olx.ua/api/open/oauth/token',
-    {
+    queryString.stringify({
       grant_type: 'authorization_code',
       client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
       client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
       code: code,
-      //redirect_uri: process.env.NEXT_PUBLIC_CALLBACK,
-    },
+      redirect_uri: process.env.NEXT_PUBLIC_CALLBACK,
+    }),
     {
       headers: {
         Origin: 'http://3.126.152.164',
         Accept: '*/*',
         'Accept-Encoding': 'gzip, deflate, br',
         Connection: 'keep-alive',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
     },
   );

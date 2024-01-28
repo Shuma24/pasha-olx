@@ -1,5 +1,4 @@
 import { exchangeOlxCode, saveToken } from '@/src/shared/api/api';
-import { clearApiInstance } from '@/src/shared/api/api-instance';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 
