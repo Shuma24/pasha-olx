@@ -15,7 +15,7 @@ export const Callback = () => {
     const response = fetch('http://3.126.152.164:8888/olx/callback', {
       method: 'put',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(code),
     });
