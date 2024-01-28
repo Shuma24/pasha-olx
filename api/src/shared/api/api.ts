@@ -1,4 +1,4 @@
-import { BodyType, createInstance } from './api-instance';
+import { BodyType, clearApiInstance, createInstance } from './api-instance';
 
 export interface SignInBodyDto {
   login: string;
@@ -15,7 +15,7 @@ export interface ISignInResponse {
   access_token: string;
 }
 
-export interface IExchangeCodeForToken {
+export interface ISaveToken {
   id: number;
   olxToken: string;
   olxRefreshToken: string;
@@ -23,8 +23,10 @@ export interface IExchangeCodeForToken {
   adminId: number;
 }
 
-export interface ExchangeCodeForTokenDTO {
-  code: string;
+export interface ISaveTokenDTO {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
 }
 
 type SecondParameter<T extends (...args: any) => any> = T extends (
@@ -62,25 +64,43 @@ export const authControllerMe = async (options?: SecondParameter<typeof createIn
   );
 };
 
-export const exchangeCodeForToken = async (
-  ExchangeCodeForTokenDTO: BodyType<ExchangeCodeForTokenDTO>,
+export const saveToken = async (
+  saveTokenDTO: BodyType<ISaveTokenDTO>,
   options?: SecondParameter<typeof createInstance>,
 ) => {
-  return createInstance<IExchangeCodeForToken>(
+  return createInstance<ISaveTokenDTO>(
     {
       url: '/olx/callback',
       method: 'put',
       headers: { 'Content-Type': 'application/json' },
-      data: ExchangeCodeForTokenDTO,
+      data: saveTokenDTO,
     },
     options,
   );
+};
+
+export const exchangeOlxCode = async (code: string) => {
+  const { data } = await clearApiInstance.post<{
+    access_token: string;
+    expires_in: number;
+    token_type: string;
+    scope: string;
+    refresh_token: string;
+  }>('https://www.olx.ua/api/open/oauth/token', {
+    grant_type: 'authorization_code',
+    client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
+    client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
+    code: code,
+    redirect_uri: process.env.NEXT_PUBLIC_CALLBACK,
+  });
+
+  return data;
 };
 
 export type AuthControllerSignInResult = NonNullable<
   Awaited<ReturnType<typeof authControllerSignIn>>
 >;
 
-export type exchangeCodeForToken = NonNullable<Awaited<ReturnType<typeof exchangeCodeForToken>>>;
+export type saveToken = NonNullable<Awaited<ReturnType<typeof saveToken>>>;
 
 export type authControllerMe = NonNullable<Awaited<ReturnType<typeof authControllerMe>>>;

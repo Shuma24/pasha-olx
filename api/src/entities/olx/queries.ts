@@ -1,15 +1,11 @@
-import { exchangeCodeForToken } from '@/src/shared/api/api';
 import { useQuery } from '@tanstack/react-query';
 
 const key = ['olxCallback'];
 
-export const useOlxCallback = (code: string) => {
+export const useOlxCallback = (access_token: string, expires_in: number, refresh_token: string) => {
   return useQuery({
     queryKey: key,
-    queryFn: async () => {
-      const data = exchangeCodeForToken({ code: code });
-      return data;
-    },
+    queryFn: async () => {},
     retry: 0,
   });
 };

@@ -5,7 +5,12 @@ import { IOlxCredentialsEntity } from './entity/olx.credentials.entity';
 import { IOlxRepository } from './repository/olx.repository';
 
 export interface IOlxService {
-  callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined>;
+  callbackOlx(
+    access_token: string,
+    expires_in: number,
+    refresh_token: string,
+    adminId: number,
+  ): Promise<IOlxCredentialsEntity | undefined>;
 }
 
 export class OlxService implements IOlxService {
@@ -16,44 +21,13 @@ export class OlxService implements IOlxService {
     private readonly _loggerService: ILoggerService,
   ) {}
 
-  async callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined> {
+  async callbackOlx(
+    access_token: string,
+    expires_in: number,
+    refresh_token: string,
+    adminId: number,
+  ): Promise<IOlxCredentialsEntity | undefined> {
     try {
-      const clientId = this._configService.get('OLX_CLIENT_ID');
-      const redirectUrl = this._configService.get('OLX_REDIRECT_URL');
-      const clientSecret = this._configService.get('OLX_CLIENT_SECRET');
-
-      console.log(code);
-
-      const response = await this._clientService.POST<{
-        access_token: string;
-        expires_in: number;
-        token_type: string;
-        scope: string;
-        refresh_token: string;
-      }>(
-        'https://www.olx.ua/api/open/oauth/token',
-        {
-          data: {
-            grant_type: 'authorization_code',
-            client_id: clientId.trim(),
-            client_secret: clientSecret.trim(),
-            code: code.trim(),
-            redirect_uri: redirectUrl.trim(),
-          },
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-            Connection: 'keep-alive',
-          },
-        },
-      );
-
-      console.log(response);
-
-      if (!response.data) throw new Error('Problems with olx /auth/token');
-
       const olxCred = await this._olxRepository.get({ adminId: adminId });
 
       if (!olxCred)
@@ -62,9 +36,9 @@ export class OlxService implements IOlxService {
       const credentials = await this._olxRepository.update(
         {
           adminId: olxCred.adminId,
-          olxRefreshToken: response.data.refresh_token,
-          olxToken: response.data.access_token,
-          expires_in: response.data.expires_in.toString(),
+          olxRefreshToken: refresh_token,
+          olxToken: access_token,
+          expires_in: expires_in.toString(),
         },
         olxCred.id,
       );
