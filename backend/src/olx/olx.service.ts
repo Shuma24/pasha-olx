@@ -25,21 +25,21 @@ export class OlxService implements IOlxService {
 
       console.log(code);
 
-      const response = await fetch('https://www.olx.ua/api/open/oauth/token', {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: queryString.stringify({
+      const { data } = await this._clientService.POST(
+        'https://www.olx.ua/api/open/oauth/token',
+        {
           grant_type: 'authorization_code',
           client_id: clientId,
           client_secret: clientSecret,
           code: code,
           redirect_uri: redirectUrl,
-        }),
-      });
-
-      const data = await response.json();
+        },
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      );
 
       console.log(data);
 
