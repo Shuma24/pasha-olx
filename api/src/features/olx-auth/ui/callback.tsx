@@ -17,7 +17,9 @@ export const Callback = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(code),
+      body: JSON.stringify({
+        code: codeString,
+      }),
     });
 
     response
