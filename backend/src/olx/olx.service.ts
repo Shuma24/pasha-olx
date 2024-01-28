@@ -22,6 +22,10 @@ export class OlxService implements IOlxService {
       const redirectUrl = this._configService.get('OLX_REDIRECT_URL');
       const clientSecret = this._configService.get('OLX_CLIENT_SECRET');
 
+      console.log(clientId);
+      console.log(redirectUrl);
+      console.log(clientSecret);
+
       const { data } = await this._clientService.POST<{
         access_token: string;
         expires_in: number;
@@ -33,7 +37,7 @@ export class OlxService implements IOlxService {
           grant_type: 'authorization_code',
           client_id: clientId,
           client_secret: clientSecret,
-          code: code,
+          code: code.trim(),
           redirect_uri: redirectUrl,
         },
       });
