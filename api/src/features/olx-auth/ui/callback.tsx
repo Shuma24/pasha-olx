@@ -1,41 +1,29 @@
 import { ROUTER_PATHS } from '@/src/shared/constants';
 import { UiPageSpinner } from '@/src/shared/ui';
-import router, { useRouter } from 'next/router';
-import { useSaveToken } from '../model/use-olx-token';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+
+import { useOlxExchange } from '@/src/entities/olx/queries';
 
 export const Callback = () => {
-  const [test, setTest] = useState('');
-
   const router = useRouter();
   const { code } = router.query;
   const codeString = typeof code === 'string' ? code : '';
 
-  useEffect(() => {
-    const response = fetch('http://3.126.152.164:8888/olx/callback', {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibG9naW4iOiJ0aXJlcy1hZG1pbiIsImlhdCI6MTcwNjQ1OTMzOCwiZXhwIjoxNzA3MDY0MTM4fQ.4FQNll8Mbw6H0Zuji99fuWFqeCb60599xmwwMXVtYT0',
-      },
-      body: JSON.stringify({
-        code: codeString,
-      }),
-    });
+  const { isError, isLoading, data, error } = useOlxExchange(codeString);
 
-    response
-      .then(async (data) => {
-        const items = await data.json();
-        console.log(items);
-        setTest(items);
-      })
-      .catch((e) => console.log(e));
-  }, [codeString]);
+  if (isLoading) {
+    return <UiPageSpinner />;
+  }
 
-  console.log('Callback success');
-  console.log(test);
+  if (isError) {
+    console.log(error.message);
+    router.push(ROUTER_PATHS.HOME);
+  }
+
+  if (data) {
+    router.push(ROUTER_PATHS.HOME);
+    console.log('Callback success');
+  }
 
   router.push(ROUTER_PATHS.HOME);
-  return <div className=''></div>;
 };

@@ -1,5 +1,4 @@
-import { BodyType, clearApiInstance, createInstance } from './api-instance';
-import queryString from 'querystring';
+import { BodyType, createInstance } from './api-instance';
 
 export interface SignInBodyDto {
   login: string;
@@ -16,18 +15,19 @@ export interface ISignInResponse {
   access_token: string;
 }
 
-export interface ISaveToken {
-  id: number;
-  olxToken: string;
-  olxRefreshToken: string;
-  expires_in: string;
-  adminId: number;
+export interface ITokenExchangeDTO {
+  code: string;
 }
 
-export interface ISaveTokenDTO {
-  access_token: string;
-  expires_in: number;
-  refresh_token: string;
+export interface ITokenExchangeResponse {
+  cred: {
+    id: number;
+    olxToken: string;
+    olxRefreshToken: string;
+    expires_in: string;
+    adminId: number;
+  };
+  status: boolean;
 }
 
 type SecondParameter<T extends (...args: any) => any> = T extends (
@@ -65,11 +65,11 @@ export const authControllerMe = async (options?: SecondParameter<typeof createIn
   );
 };
 
-export const saveToken = async (
-  saveTokenDTO: BodyType<ISaveTokenDTO>,
+export const TokenExchange = async (
+  saveTokenDTO: BodyType<ITokenExchangeDTO>,
   options?: SecondParameter<typeof createInstance>,
 ) => {
-  return createInstance<ISaveTokenDTO>(
+  return createInstance<ITokenExchangeResponse>(
     {
       url: '/olx/callback',
       method: 'put',
@@ -80,36 +80,10 @@ export const saveToken = async (
   );
 };
 
-export const exchangeOlxCode = async (code: string) => {
-  const { data } = await clearApiInstance.post<{
-    access_token: string;
-    expires_in: number;
-    token_type: string;
-    scope: string;
-    refresh_token: string;
-  }>(
-    'https://www.olx.ua/api/open/oauth/token',
-    queryString.stringify({
-      grant_type: 'authorization_code',
-      client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
-      client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
-      code: code,
-      redirect_uri: process.env.NEXT_PUBLIC_CALLBACK,
-    }),
-    {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    },
-  );
-
-  return data;
-};
-
 export type AuthControllerSignInResult = NonNullable<
   Awaited<ReturnType<typeof authControllerSignIn>>
 >;
 
-export type saveToken = NonNullable<Awaited<ReturnType<typeof saveToken>>>;
+export type saveToken = NonNullable<Awaited<ReturnType<typeof TokenExchange>>>;
 
 export type authControllerMe = NonNullable<Awaited<ReturnType<typeof authControllerMe>>>;

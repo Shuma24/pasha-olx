@@ -3,7 +3,6 @@ import { IConfigService } from '../common/config-service/config.service';
 import { ILoggerService } from '../common/logger-service/logger.service';
 import { IOlxCredentialsEntity } from './entity/olx.credentials.entity';
 import { IOlxRepository } from './repository/olx.repository';
-import queryString from 'querystring';
 
 export interface IOlxService {
   callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined>;
@@ -23,8 +22,6 @@ export class OlxService implements IOlxService {
       const redirectUrl = this._configService.get('OLX_REDIRECT_URL');
       const clientSecret = this._configService.get('OLX_CLIENT_SECRET');
 
-      console.log(code);
-
       const { data } = await this._clientService.POST(
         'https://www.olx.ua/api/open/oauth/token',
         {
@@ -40,8 +37,6 @@ export class OlxService implements IOlxService {
           },
         },
       );
-
-      console.log(data);
 
       if (!data) throw new Error('Problems with olx /auth/token');
 
@@ -59,8 +54,6 @@ export class OlxService implements IOlxService {
         },
         olxCred.id,
       );
-
-      console.log(credentials);
 
       if (!credentials) return undefined;
 
