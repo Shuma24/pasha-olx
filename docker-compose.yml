@@ -1,0 +1,20 @@
+version: '3'
+services:
+  frontend:
+    build: ./api
+    container_name: front
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - /app/node_modules
+      - ./api:/app
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    ports:
+      - 8888:8888
+    volumes:
+      - /app/node_modules
+      - ./backend:/app

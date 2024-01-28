@@ -4,5 +4,6 @@ dist
 npm-debug.log
 .coverage
 .coverage.*
-
+.next
+.next-env.d.ts
 .aws
