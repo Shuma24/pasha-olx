@@ -8,6 +8,8 @@ export function useSaveToken() {
   const { code } = router.query;
   const codeString = typeof code === 'string' ? code : '';
 
+  console.log(code);
+
   const signOutMutation = useMutation({
     mutationFn: exchangeOlxCode,
     async onSuccess(data) {
