@@ -65,6 +65,6 @@ export class OlxController extends BaseController {
       return;
     }
 
-    reply.code(200).send({ status: true, cred: credentials });
+    reply.code(200).send(credentials);
   }
 }
