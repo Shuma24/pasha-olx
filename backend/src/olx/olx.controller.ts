@@ -10,7 +10,7 @@ export class OlxController extends BaseController {
 
     this.bindRoutes(this, [
       {
-        method: 'POST',
+        method: 'PUT',
         url: '/olx/callback',
         handler: this.callback,
         schema: {

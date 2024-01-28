@@ -68,8 +68,8 @@ export const exchangeCodeForToken = async (
 ) => {
   return createInstance<IExchangeCodeForToken>(
     {
-      url: `/olx/callback`,
-      method: 'post',
+      url: '/olx/callback',
+      method: 'put',
       headers: { 'Content-Type': 'application/json' },
       data: ExchangeCodeForTokenDTO,
     },
