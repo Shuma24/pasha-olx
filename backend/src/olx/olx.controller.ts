@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { BaseController } from '../abstract/repository.abstract';
 import type { ILoggerService } from '../common/logger-service/logger.service';
-import type { callbackBodyDto } from './dto/olx.dto';
+import { callbackBodyDto } from './dto/olx.dto';
 import { IOlxService } from './olx.service';
 
 export class OlxController extends BaseController {
@@ -14,6 +14,7 @@ export class OlxController extends BaseController {
         url: '/olx/callback',
         handler: this.callback,
         schema: {
+          body: callbackBodyDto,
           tags: ['Olx'],
         },
       },
@@ -21,7 +22,7 @@ export class OlxController extends BaseController {
   }
 
   async callback(req: FastifyRequest<{ Body: callbackBodyDto }>, reply: FastifyReply) {
-    if (!req.user || req.user.id) {
+    if (!req.user || !req.user.id) {
       reply.code(403).send({ status: false, error: 'Unauthorized' });
       return;
     }
