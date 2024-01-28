@@ -1,9 +1,10 @@
 import { UiButton } from '@/src/shared/ui';
 import React from 'react';
-import { useOlxAuthLink } from '../model/useOlxLink';
+import { useOlxAuthLink } from '../model/use-olx-link';
+import Link from 'next/link';
 
 export const OlxLoginButton = () => {
-  const { handleClick } = useOlxAuthLink();
+  const { url } = useOlxAuthLink();
 
-  return <UiButton variant='secondary' onClick={handleClick}></UiButton>;
+  return <Link href={url}>OLX</Link>;
 };

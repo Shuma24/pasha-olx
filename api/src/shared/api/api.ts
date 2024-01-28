@@ -93,7 +93,7 @@ export const exchangeOlxCode = async (code: string) => {
       client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
       client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
       code: code,
-      redirect_uri: process.env.NEXT_PUBLIC_CALLBACK,
+      //redirect_uri: process.env.NEXT_PUBLIC_CALLBACK,
     },
     {
       headers: {
