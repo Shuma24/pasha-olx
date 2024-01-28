@@ -8,9 +8,13 @@ export const OlxStatus = () => {
   if (isLoading) return <UiPageSpinner />;
 
   const isData = data && (
-    <div className='flex items-center'>
-      <span>{data.olxToken}</span>
-      <span>{data.expires_in}</span>
+    <div className='flex items-center gap-10 flex-wrap flex-col'>
+      <span>
+        Token: <strong>{data.olxToken}</strong>
+      </span>
+      <span>
+        Token life: <strong>{data.expires_in}</strong>, if you have error reauthorize
+      </span>
     </div>
   );
 
