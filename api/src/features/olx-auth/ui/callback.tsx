@@ -10,7 +10,7 @@ export const Callback = () => {
 
   const codeString = typeof code === 'string' ? code : '';
 
-  const { data, isLoading, isError } = useOlxCallback(codeString);
+  const { data, isLoading, isError, error } = useOlxCallback(codeString);
 
   if (isLoading) {
     return <UiPageSpinner />;
@@ -18,6 +18,7 @@ export const Callback = () => {
 
   if (isError) {
     console.log('Error callback olx');
+    console.log(error.message);
     router.push(ROUTER_PATHS.HOME);
   }
 
