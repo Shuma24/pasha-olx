@@ -98,10 +98,6 @@ export const exchangeOlxCode = async (code: string) => {
     }),
     {
       headers: {
-        Origin: 'http://3.126.152.164',
-        Accept: '*/*',
-        'Accept-Encoding': 'gzip, deflate, br',
-        Connection: 'keep-alive',
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     },
