@@ -16,6 +16,8 @@ export const Callback = () => {
       method: 'put',
       headers: {
         'Content-Type': 'application/json',
+        Authorization:
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibG9naW4iOiJ0aXJlcy1hZG1pbiIsImlhdCI6MTcwNjQ1OTMzOCwiZXhwIjoxNzA3MDY0MTM4fQ.4FQNll8Mbw6H0Zuji99fuWFqeCb60599xmwwMXVtYT0',
       },
       body: JSON.stringify({
         code: codeString,
