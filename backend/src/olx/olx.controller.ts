@@ -29,6 +29,8 @@ export class OlxController extends BaseController {
     const { code } = req.body;
     const { id } = req.user;
 
+    console.log(code);
+
     const credentials = await this._olxService.callbackOlx(code, id);
 
     if (!credentials) {

@@ -38,6 +38,8 @@ export class OlxService implements IOlxService {
         },
       });
 
+      console.log(data);
+
       if (!data) throw new Error('Problems with olx /auth/token');
 
       const olxCred = await this._olxRepository.get({ adminId: adminId });
@@ -54,6 +56,8 @@ export class OlxService implements IOlxService {
         },
         olxCred.id,
       );
+
+      console.log(credentials);
 
       if (!credentials) return undefined;
 
