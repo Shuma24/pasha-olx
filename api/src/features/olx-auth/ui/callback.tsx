@@ -21,6 +21,7 @@ export const Callback = () => {
   }
 
   if (data) {
+    localStorage.setItem('olx_token', data.cred.olxToken);
     router.push(ROUTER_PATHS.HOME);
     console.log('Callback success');
   }
