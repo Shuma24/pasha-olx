@@ -32,8 +32,6 @@ export const Callback = () => {
 
       return await test.json();
     };
-
-    testfunc();
   }, [codeString]);
 
   console.log('Callback success');
