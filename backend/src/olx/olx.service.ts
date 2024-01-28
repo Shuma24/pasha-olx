@@ -28,7 +28,7 @@ export class OlxService implements IOlxService {
       const response = await fetch('https://www.olx.ua/api/open/oauth/token', {
         method: 'post',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
         body: queryString.stringify({
           grant_type: 'authorization_code',
