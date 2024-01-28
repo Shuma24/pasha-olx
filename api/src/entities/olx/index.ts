@@ -1,0 +1,1 @@
+export { useLoginOlxPageQuery } from './queries';
