@@ -97,7 +97,7 @@ export const exchangeOlxCode = async (code: string) => {
     },
     {
       headers: {
-        'Access-Control-Allow-Origin': 'http://3.126.152.164',
+        Origin: 'http://3.126.152.164',
         Accept: '*/*',
         'Accept-Encoding': 'gzip, deflate, br',
         Connection: 'keep-alive',
