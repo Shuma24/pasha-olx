@@ -38,6 +38,62 @@ export interface IOlxCredentialsResponse {
   adminId: number;
 }
 
+interface IOlxAdvertsResponse {
+  data: IAdvert[];
+}
+
+interface IAdvert {
+  id: number;
+  status: string;
+  url: string;
+  created_at: string;
+  activated_at: string;
+  valid_to: string;
+  title: string;
+  description: string;
+  category_id: number;
+  advertiser_type: string;
+  external_id: number;
+  external_url: string;
+  contact: IContactInfo;
+  images: Image[];
+  price: IPriceDetails;
+  salary?: any; // Replace with a more specific type if applicable
+  attributes: IAttribute[];
+  courier?: any; // Replace with a more specific type if applicable
+}
+
+interface IContactInfo {
+  name: string;
+  phone: number;
+  location: ILocation;
+}
+
+interface ILocation {
+  city_id: number;
+  district_id?: number | null;
+  latitude: number;
+  longitude: number;
+}
+
+interface Image {
+  url: string;
+}
+
+interface IPriceDetails {
+  value: number;
+  currency: string;
+  negotiable: boolean;
+  trade: boolean;
+  budget: boolean;
+}
+
+interface IAttribute {
+  code: string;
+  value: string | number;
+  values?: any | null;
+}
+
 type SecondParameter<T extends (...args: any) => any> = T extends (
   config: any,
   args: infer P,
