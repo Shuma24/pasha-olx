@@ -34,7 +34,7 @@ export class OlxService implements IOlxService {
           client_id: clientId,
           client_secret: clientSecret,
           code: code,
-          scope: 'v2 read write',
+          scope: 'read write v2',
         },
         {
           headers: {
