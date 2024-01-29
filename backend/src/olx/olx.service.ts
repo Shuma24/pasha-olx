@@ -35,7 +35,6 @@ export class OlxService implements IOlxService {
           client_secret: clientSecret,
           code: code,
           scope: 'v2 read write',
-          redirect_uri: redirectUrl,
         },
         {
           headers: {
