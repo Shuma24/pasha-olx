@@ -7,7 +7,11 @@ import { IOlxRepository } from './repository/olx.repository';
 export interface IOlxService {
   callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined>;
   get(adminId: number): Promise<IOlxCredentialsEntity | null>;
-  listOfAdverts(adminId: number): Promise<IOlxAdvertsResponse | never[]>;
+  listOfAdverts(
+    adminId: number,
+    page: number,
+    limit: number,
+  ): Promise<IOlxAdvertsResponse | never[]>;
 }
 
 interface IOlxAdvertsResponse {
@@ -77,7 +81,7 @@ export class OlxService implements IOlxService {
     return await this._olxRepository.get({ adminId: Number(adminId) });
   }
 
-  async listOfAdverts(adminId: number) {
+  async listOfAdverts(adminId: number, page: number, limit: number) {
     const cred = await this.get(adminId);
     if (!cred) throw new Error('Set olx credentials');
 
@@ -87,6 +91,10 @@ export class OlxService implements IOlxService {
         headers: {
           Version: 'v2',
           Authorization: `Bearer ${cred.olxToken}`,
+        },
+        params: {
+          page: page,
+          limit: limit,
         },
       },
     );
