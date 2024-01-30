@@ -1,4 +1,4 @@
-import { BodyType, createInstance } from './api-instance';
+import { BodyType, OlxApiInstance, createInstance } from './api-instance';
 
 export interface SignInBodyDto {
   login: string;
@@ -153,6 +153,14 @@ export const getOlxCredentials = async (options?: SecondParameter<typeof createI
     },
     options,
   );
+};
+
+export const getAdverts = async (access_token: string) => {
+  return await OlxApiInstance.get<IAdvert[]>('/partner/adverts', {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  });
 };
 
 export type AuthControllerSignInResult = NonNullable<

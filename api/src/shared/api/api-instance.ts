@@ -1,6 +1,12 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
-export const clearApiInstance = axios.create();
+export const OlxApiInstance = axios.create({
+  baseURL: 'https://www.olx.ua/api',
+  withCredentials: true,
+  headers: {
+    Version: 'v2',
+  },
+});
 
 export const apiInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
