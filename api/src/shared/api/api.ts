@@ -156,7 +156,7 @@ export const getOlxCredentials = async (options?: SecondParameter<typeof createI
 };
 
 export const getAdverts = async (
-  params: { offset: number; limit: number },
+  params: { page: number; limit: number },
   options?: SecondParameter<typeof createInstance>,
 ) => {
   return createInstance<IOlxAdvertsResponse>(

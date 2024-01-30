@@ -21,15 +21,15 @@ export const useOlxCredentials = () => {
   });
 };
 
-type QueryKeyAdverts = [string, { offset: number; limit: number }];
+type QueryKeyAdverts = [string, { page: number; limit: number }];
 
-export const useOlxProducts = (offset: number, limit: number) => {
+export const useOlxProducts = (page: number, limit: number) => {
   return useQuery({
-    queryKey: ['useOlxAdverts', { offset, limit }] as QueryKeyAdverts,
+    queryKey: ['useOlxAdverts', { page, limit }] as QueryKeyAdverts,
     queryFn: ({ queryKey }) => {
-      const [, { offset, limit }] = queryKey;
+      const [, { page, limit }] = queryKey;
 
-      return getAdverts({ offset, limit });
+      return getAdverts({ page, limit });
     },
     retry: 0,
     staleTime: 5 * 60 * 1000,

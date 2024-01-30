@@ -4,7 +4,7 @@ import { useOlxProducts } from '@/src/entities/olx/queries';
 import Image from 'next/image';
 
 export const ProductsOlx = () => {
-  const { error, data, isLoading, isError } = useOlxProducts(1, 10);
+  const { error, data, isLoading, isError } = useOlxProducts(0, 10);
 
   if (isLoading) {
     return <UiPageSpinner />;
@@ -45,6 +45,9 @@ export const ProductsOlx = () => {
                 </span>
                 <span>
                   Дата створення: <strong>{el.created_at}</strong>
+                </span>
+                <span>
+                  Статус: <strong>{el.status}</strong>
                 </span>
               </div>
             </div>
