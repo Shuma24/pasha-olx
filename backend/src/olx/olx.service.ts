@@ -7,8 +7,64 @@ import { IOlxRepository } from './repository/olx.repository';
 export interface IOlxService {
   callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined>;
   get(adminId: number): Promise<IOlxCredentialsEntity | null>;
+  listOfAdverts(adminId: number): Promise<IOlxAdvertsResponse | never[]>;
 }
 
+interface IOlxAdvertsResponse {
+  data: IAdvert[];
+}
+
+interface IAdvert {
+  id: number;
+  status: string;
+  url: string;
+  created_at: string;
+  activated_at: string;
+  valid_to: string;
+  title: string;
+  description: string;
+  category_id: number;
+  advertiser_type: string;
+  external_id: number;
+  external_url: string;
+  contact: IContactInfo;
+  images: Image[];
+  price: IPriceDetails;
+  salary?: any; // Replace with a more specific type if applicable
+  attributes: IAttribute[];
+  courier?: any; // Replace with a more specific type if applicable
+}
+
+interface IContactInfo {
+  name: string;
+  phone: number;
+  location: ILocation;
+}
+
+interface ILocation {
+  city_id: number;
+  district_id?: number | null;
+  latitude: number;
+  longitude: number;
+}
+
+interface Image {
+  url: string;
+}
+
+interface IPriceDetails {
+  value: number;
+  currency: string;
+  negotiable: boolean;
+  trade: boolean;
+  budget: boolean;
+}
+
+interface IAttribute {
+  code: string;
+  value: string | number;
+  values?: any | null;
+}
 export class OlxService implements IOlxService {
   constructor(
     private readonly _configService: IConfigService,
@@ -19,6 +75,27 @@ export class OlxService implements IOlxService {
 
   async get(adminId: number) {
     return await this._olxRepository.get({ adminId: Number(adminId) });
+  }
+
+  async listOfAdverts(adminId: number) {
+    const cred = await this.get(adminId);
+    if (!cred) throw new Error('Set olx credentials');
+
+    const { data } = await this._clientService.GET<IOlxAdvertsResponse>(
+      'https://www.olx.ua/api/partner/adverts',
+      {
+        headers: {
+          Version: 'v2',
+          Authorization: `Bearer ${cred.olxToken}`,
+        },
+      },
+    );
+
+    if (!data) {
+      throw new Error('Problem with fetch adverts check token life');
+    }
+
+    return data;
   }
 
   async callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined> {
@@ -43,8 +120,6 @@ export class OlxService implements IOlxService {
           },
         },
       );
-
-      console.log(data);
 
       if (!data) throw new Error('Problems with olx /auth/token');
 

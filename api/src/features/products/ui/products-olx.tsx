@@ -1,38 +1,28 @@
 import React from 'react';
-import { UseOLxProducts } from '../model/use-olx-products';
 import { UiPageSpinner } from '@/src/shared/ui';
+import { useOlxProducts } from '@/src/entities/olx/queries';
 
 export const ProductsOlx = () => {
-  const { error, fetchProducts, productsMutation } = UseOLxProducts();
+  const { error, data, isLoading, isError } = useOlxProducts();
 
-  const fetchWrap = React.useCallback(() => fetchProducts(), [fetchProducts]);
-
-  React.useEffect(() => {
-    fetchWrap();
-  }, [fetchWrap]);
-
-  if (productsMutation.isPending) {
+  if (isLoading) {
     return <UiPageSpinner />;
   }
 
-  if (productsMutation.isError || error) {
-    if (productsMutation.isError) {
-      return (
-        <div>
-          Error loading products: {productsMutation.error.message} || {error}
-        </div>
-      );
+  if (isError || error) {
+    if (isError) {
+      return <div>Error loading products: {error.message}</div>;
     }
   }
 
-  if (productsMutation.data && productsMutation.data.data.length) {
+  if (data && !data.data.length) {
     return <div>No products to display</div>;
   }
 
-  if (productsMutation.data && productsMutation.data.data) {
+  if (data && data.data) {
     return (
       <div className='grid grid-cols-5 md:grid-cols-3 gap-4'>
-        {productsMutation.data.data.map((el) => (
+        {data.data.map((el) => (
           <div key={el.id}>
             <span>{el.title}</span>
             <span>{el.url}</span>

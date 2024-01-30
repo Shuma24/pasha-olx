@@ -26,6 +26,14 @@ export class OlxController extends BaseController {
           tags: ['Olx'],
         },
       },
+      {
+        method: 'GET',
+        url: '/olx/adverts',
+        handler: this.listOfAdverts,
+        schema: {
+          tags: ['Olx'],
+        },
+      },
     ]);
   }
 
@@ -66,5 +74,23 @@ export class OlxController extends BaseController {
     }
 
     reply.code(200).send(credentials);
+  }
+
+  async listOfAdverts(req: FastifyRequest, reply: FastifyReply) {
+    if (!req.user || !req.user.id) {
+      reply.code(403).send({ status: false, error: 'Unauthorized' });
+      return;
+    }
+
+    const { id } = req.user;
+
+    const listOfAdverts = await this._olxService.listOfAdverts(id);
+
+    if (!listOfAdverts) {
+      reply.code(400).send({ status: false, error: 'Problem with get olx adverts' });
+      return;
+    }
+
+    reply.code(200).send(listOfAdverts);
   }
 }
