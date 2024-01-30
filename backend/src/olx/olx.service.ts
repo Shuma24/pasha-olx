@@ -86,14 +86,14 @@ export class OlxService implements IOlxService {
     if (!cred) throw new Error('Set olx credentials');
 
     const { data } = await this._clientService.GET<IOlxAdvertsResponse>(
-      'https://www.olx.ua/api/partner/adverts',
+      `https://www.olx.ua/api/partner/adverts`,
       {
         headers: {
           Version: 'v2',
           Authorization: `Bearer ${cred.olxToken}`,
         },
         params: {
-          page: page,
+          offset: page,
           limit: limit,
         },
       },
