@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { InputHTMLAttributes, PropsWithRef, useId } from 'react';
+import { FieldError } from 'react-hook-form';
 
 export type UiTextInputFieldProps = {
   className?: string;

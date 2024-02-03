@@ -6,8 +6,8 @@ export const swaggerOptions: FastifyDynamicSwaggerOptions = {
   swagger: {
     info: {
       title: 'Tires Api',
-      description: 'Information about the API',
-      version: '1.0.0',
+      description: 'Best api alpha',
+      version: '0.0.1',
     },
     securityDefinitions: {
       apiKey: {
@@ -16,7 +16,7 @@ export const swaggerOptions: FastifyDynamicSwaggerOptions = {
         in: 'header',
       },
     },
-    host: 'localhost:5222',
+    host: 'http://3.126.152.164:8888',
     schemes: ['http', 'https'],
     consumes: ['application/json'],
     produces: ['application/json'],

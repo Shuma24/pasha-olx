@@ -14,4 +14,5 @@ injected(
   TOKENS.HookService,
   TOKENS.adminController,
   TOKENS.olxController,
+  TOKENS.crossController,
 );

@@ -1,12 +1,28 @@
-import { IClientService } from '../common/client-service/client.service';
-import { IConfigService } from '../common/config-service/config.service';
-import { ILoggerService } from '../common/logger-service/logger.service';
-import { IOlxCredentialsEntity } from './entity/olx.credentials.entity';
-import { IOlxRepository } from './repository/olx.repository';
+import type { IClientService } from '../common/client-service/client.service';
+import type { IConfigService } from '../common/config-service/config.service';
+import type { ILoggerService } from '../common/logger-service/logger.service';
+import type { IOlxCredentialsEntity } from './entity/olx.credentials.entity';
+import type { IAdvertOlxResponse } from './interfaces';
+import type { IOlxRepository } from './repository/olx.repository';
+
+interface IOlxAvertData {
+  files: { url: string }[];
+  title: string;
+  description: string;
+  advertiserType: string;
+  price: string;
+  size: string;
+  type: string;
+  quantity: string;
+  year: string;
+  state: string;
+  brand: string;
+}
 
 export interface IOlxService {
   callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined>;
   get(adminId: number): Promise<IOlxCredentialsEntity | null>;
+  createAdvert(data: IOlxAvertData): Promise<IAdvertOlxResponse | null>;
 }
 
 export class OlxService implements IOlxService {
@@ -70,4 +86,6 @@ export class OlxService implements IOlxService {
       }
     }
   }
+
+  createAdvert(data: IOlxAvertData) {}
 }

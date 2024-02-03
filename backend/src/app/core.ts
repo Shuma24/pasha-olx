@@ -22,10 +22,11 @@ export class Application {
     private readonly _hookService: IHookService,
     private readonly _adminController: BaseController,
     private readonly _olxController: BaseController,
+    private readonly _crossController: BaseController,
   ) {
     this.app = fastify();
     this.port = Number(this._configService.get('PORT'));
-    this.routes = [_authController, _adminController, _olxController];
+    this.routes = [_authController, _adminController, _olxController, _crossController];
   }
 
   registerPlugins<T>(plugin: FastifyPluginCallback, options?: FastifyRegisterOptions<T>) {
