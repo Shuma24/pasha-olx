@@ -61,7 +61,7 @@ export class CrossController extends BaseController {
       brand,
     } = request.body;
 
-    console.log(files[0] instanceof Buffer);
+    console.log(files[0]);
 
     const tires = await this._botService.create({
       title: title,

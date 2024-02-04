@@ -72,7 +72,7 @@ export class BotService implements IBotService {
       const uploadedImages: ITiresImages[] = [];
       for (const image of images) {
         const uploadedPhoto = await this._storageService.handleFile({
-          data: Buffer.from(image),
+          data: Buffer.from(image.data, 'base64'),
           filename: 'tires-bot',
           encoding: 'utf8',
           mimetype: 'image/jpeg',
