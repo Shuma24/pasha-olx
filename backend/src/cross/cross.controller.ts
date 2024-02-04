@@ -7,7 +7,7 @@ import { IBotService } from '../bot/bot.service';
 import { IOlxService } from '../olx/olx.service';
 
 type CrossBodyReq = {
-  files: Buffer[];
+  files: IFile[];
   title: string;
   description: string;
   advertiserType: string;
@@ -43,7 +43,6 @@ export class CrossController extends BaseController {
   }
 
   async createCross(request: FastifyRequest<{ Body: CrossBodyReq }>, reply: FastifyReply) {
-    console.log(request.body);
     if (!request.user) throw new Error('Authorize!');
 
     const { id } = request.user;
@@ -61,6 +60,8 @@ export class CrossController extends BaseController {
       state,
       brand,
     } = request.body;
+
+    console.log(files[0] instanceof Buffer);
 
     const tires = await this._botService.create({
       title: title,

@@ -14,7 +14,7 @@ export interface IBotService {
     type: string;
     quantity: string;
   }): Promise<ITires | undefined>;
-  createImage(images: Buffer[], tiresID: number): Promise<{ url: string }[] | undefined>;
+  createImage(images: IFile[], tiresID: number): Promise<{ url: string }[] | undefined>;
   delete(id: number): Promise<boolean | undefined>;
   getById(id: number): Promise<ITires | undefined>;
 }
@@ -67,15 +67,12 @@ export class BotService implements IBotService {
     }
   }
 
-  async createImage(images: Buffer[], tiresID: number): Promise<{ url: string }[] | undefined> {
+  async createImage(images: IFile[], tiresID: number): Promise<{ url: string }[] | undefined> {
     try {
       const uploadedImages: ITiresImages[] = [];
-
-      console.log(images);
-
       for (const image of images) {
         const uploadedPhoto = await this._storageService.handleFile({
-          data: image,
+          data: image.data,
           filename: 'tires-bot',
           encoding: 'utf8',
           mimetype: 'image/jpeg',
