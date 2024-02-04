@@ -42,6 +42,7 @@ export const CreateAdvertForm = () => {
           className=''
           inputProps={{
             type: 'text',
+            minLength: 80,
             required: true,
             ...register('description', { required: true }),
           }}

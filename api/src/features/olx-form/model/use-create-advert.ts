@@ -21,7 +21,7 @@ export function useSignInForm() {
     mutationFn: createCrossAdvert,
   });
 
-  const errorMessage = createAdvertMutation.error ? 'Create advert error' : undefined;
+  const errorMessage = createAdvertMutation.error ? createAdvertMutation.error.message : undefined;
 
   return {
     register,
@@ -41,7 +41,7 @@ export function useSignInForm() {
       formData.append('brand', data.brand);
 
       for (let i = 0; i < data.images.length; i++) {
-        formData.append('images', data.images[i]);
+        formData.append('files', data.images[i]);
       }
 
       return createAdvertMutation.mutate(formData);

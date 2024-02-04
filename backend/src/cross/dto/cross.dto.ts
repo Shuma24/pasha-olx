@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox';
 
 export const CrossBody = Type.Object({
-  files: Type.Array(Type.Any()),
+  files: Type.Any(),
   title: Type.String(),
   description: Type.String(),
   advertiserType: Type.String(),
