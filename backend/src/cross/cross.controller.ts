@@ -43,6 +43,7 @@ export class CrossController extends BaseController {
   }
 
   async createCross(request: FastifyRequest<{ Body: CrossBodyReq }>, reply: FastifyReply) {
+    console.log(request.body);
     if (!request.user) throw new Error('Authorize!');
 
     const { id } = request.user;

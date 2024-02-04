@@ -141,11 +141,12 @@ export const createCrossAdvert = async (
   advertBody: BodyType<FormData>,
   options?: SecondParameter<typeof createInstance>,
 ) => {
+  console.log(advertBody);
   return createInstance<ICreateAdvertResponse>(
     {
       url: `/cross/create`,
       method: 'post',
-      headers: { 'Content-Type': 'multipart/form-data' },
+
       data: advertBody,
     },
     options,

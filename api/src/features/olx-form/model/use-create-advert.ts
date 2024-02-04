@@ -27,6 +27,7 @@ export function useSignInForm() {
     register,
     errorMessage,
     handleSubmit: handleSubmit((data) => {
+      console.log(data);
       const formData = new FormData();
 
       formData.append('title', data.title);
@@ -40,9 +41,13 @@ export function useSignInForm() {
       formData.append('state', data.state);
       formData.append('brand', data.brand);
 
+      console.log(data.images);
+
       for (let i = 0; i < data.images.length; i++) {
         formData.append('files', data.images[i]);
       }
+
+      console.log(formData);
 
       return createAdvertMutation.mutate(formData);
     }),
