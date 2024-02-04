@@ -7,7 +7,7 @@ import { IBotService } from '../bot/bot.service';
 import { IOlxService } from '../olx/olx.service';
 
 type CrossBodyReq = {
-  files: IFile[];
+  files: Buffer[];
   title: string;
   description: string;
   advertiserType: string;
