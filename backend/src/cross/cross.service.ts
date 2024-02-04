@@ -1,12 +1,33 @@
 import { ILoggerService } from '../common/logger-service/logger.service';
 import { ICrossRepository } from './cross.repository';
+import { CrossListQuery } from './dto/cross.dto';
 import { CrossEntity, ICross } from './entity/corss.entity';
 
 export interface ICrossService {
   create(data: { tiresId: number; olxId: number }): Promise<ICross>;
   delete(id: number): Promise<boolean>;
   getBytTiresId(id: number): Promise<ICross | undefined>;
-  getListTires(): Promise<any>;
+  getListTires(query: CrossListQuery): Promise<
+    | {
+        tires: {
+          tires: {
+            id: number;
+            name: string;
+            description: string;
+            price: number;
+            size: string;
+            quantity: number;
+            type: string;
+            createdAt: Date | null;
+            updatedAt: Date | null;
+          };
+        }[];
+        page: number;
+        total: number;
+        lastPage: number;
+      }
+    | undefined
+  >;
 }
 
 export class CrossService implements ICrossService {
@@ -42,11 +63,27 @@ export class CrossService implements ICrossService {
     return cross;
   }
 
-  async getListTires() {
-    const cross = await this._crossRepository.getList();
+  async getListTires(query: CrossListQuery) {
+    const pageSize = Number(query.pageSize) || 10;
+    const skipPage = Number(query.skipPage) || 0;
 
-    if (!cross) return undefined;
+    const { tires, total } = await this._crossRepository.getList({
+      skipPage: skipPage,
+      pageSize: pageSize,
+      search: query.search,
+    });
 
-    return cross;
+    if (!tires) return undefined;
+
+    const totalPages = Math.ceil(total / pageSize);
+
+    const currentPage = skipPage >= totalPages ? totalPages - 1 : skipPage;
+
+    return {
+      tires: tires,
+      page: currentPage,
+      total: total,
+      lastPage: totalPages,
+    };
   }
 }

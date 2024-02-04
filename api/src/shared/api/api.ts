@@ -1,5 +1,40 @@
 import { BodyType, createInstance } from './api-instance';
 
+export interface IOlxTiresListResponse {
+  tires: IOlxListEntity[];
+  page: number;
+  total: number;
+  lastPage: number;
+}
+
+export interface IOlxListEntity {
+  id: number;
+  tiresId: number;
+  olxId: number;
+  tires: ITire;
+}
+
+export interface ITire {
+  id: number;
+  name: string;
+  images: ITireImages[];
+  description: string;
+  price: number;
+  size: string;
+  quantity: number;
+  type: string;
+  createdAt: string;
+  updateAt: string;
+}
+
+export interface ITireImages {
+  id: number;
+  tiresId: number;
+  url: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface SignInBodyDto {
   login: string;
   password: string;
@@ -72,9 +107,9 @@ interface IAdvert {
   contact: IContactInfo;
   images: Image[];
   price: IPriceDetails;
-  salary?: any; // Replace with a more specific type if applicable
+  salary?: any;
   attributes: IAttribute[];
-  courier?: any; // Replace with a more specific type if applicable
+  courier?: any;
 }
 
 interface IContactInfo {
@@ -197,6 +232,21 @@ export const getAdverts = async (
   return createInstance<IOlxAdvertsResponse>(
     {
       url: `/olx/adverts`,
+      method: 'get',
+      headers: { 'Content-Type': 'application/json' },
+      params: params,
+    },
+    options,
+  );
+};
+
+export const getTires = async (
+  params: { pageSize: number; skipPage: number; search?: string },
+  options?: SecondParameter<typeof createInstance>,
+) => {
+  return createInstance<IOlxTiresListResponse>(
+    {
+      url: '/cross/list',
       method: 'get',
       headers: { 'Content-Type': 'application/json' },
       params: params,

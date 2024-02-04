@@ -12,7 +12,7 @@ import {
 } from '../model/constants';
 
 export const CreateAdvertForm = () => {
-  const { register, handleSubmit, errorMessage, data } = useSignInForm();
+  const { register, handleSubmit, errorMessage, data, loading } = useSignInForm();
 
   return (
     <>
@@ -95,7 +95,7 @@ export const CreateAdvertForm = () => {
         />
         <UiSelectField options={selectStateOptions} label='Стан' {...register('state')} />
         <UiSelectField options={selectBrandOptions} label='Бренд' {...register('brand')} />
-        <UiButton className='mt-5 mb-5' variant='primary'>
+        <UiButton className='mt-5 mb-5' variant='primary' disabled={loading}>
           Create
         </UiButton>
 

@@ -1,0 +1,1 @@
+export { useTiresProducts } from './queries';

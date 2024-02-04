@@ -1,11 +1,12 @@
 import React from 'react';
-import { Slider, UiButton, UiPageSpinner } from '@/src/shared/ui';
-import { useOlxProducts } from '@/src/entities/olx/queries';
+import { UiButton, UiPageSpinner } from '@/src/shared/ui';
+
 import Image from 'next/image';
+import { useTiresProducts } from '@/src/entities/tire';
 
 export const ProductsOlx = () => {
   const [currentPage, setCurrentPage] = React.useState<number>(0);
-  const { error, data, isLoading, isError } = useOlxProducts(currentPage, 10);
+  const { error, data, isLoading, isError } = useTiresProducts(currentPage, 10);
 
   const handleNextPage = () => {
     setCurrentPage(currentPage + 1);
@@ -25,18 +26,18 @@ export const ProductsOlx = () => {
     }
   }
 
-  if (data && data.data) {
+  if (data) {
     return (
       <>
         <div className='grid grid-cols-5 md:grid-cols-3 gap-4'>
           <div className='flex flex-col items-center'>
-            {data.data.map((el) => (
+            {data.tires.map((el) => (
               <div key={el.id} className='space-y-2'>
-                {el.images.length > 0 && (
+                {el.tires.images.length > 0 && (
                   <Image
                     unoptimized
-                    src={el.images[0].url}
-                    alt='Advert photo'
+                    src={el.tires.images[0].url}
+                    alt='Tire photo'
                     width={200}
                     height={200}
                   />
@@ -44,30 +45,21 @@ export const ProductsOlx = () => {
 
                 <div className='flex flex-col'>
                   <h1>
-                    Назва: <strong>{el.title}</strong>
+                    Назва: <strong>{el.tires.name}</strong>
                   </h1>
                   <span>
-                    ID: <strong>{el.id}</strong>
+                    ID BOT: <strong>{el.id}</strong>
+                    ID OLX: <strong>{el.olxId}</strong>
                   </span>
                   <span>
-                    Дата створення: <strong>{el.created_at}</strong>
-                  </span>
-                  <span>
-                    Статус: <strong>{el.status}</strong>
+                    Дата створення: <strong>{el.tires.createdAt}</strong>
                   </span>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className='flex mt-4 justify-center items-center gap-4'>
-          <UiButton variant='primary' onClick={handlePrevPage} disabled={currentPage === 0}>
-            Prev
-          </UiButton>
-          <UiButton variant='primary' onClick={handleNextPage} disabled={!data.data.length}>
-            Next
-          </UiButton>
-        </div>
+        <div className='flex mt-4 justify-center items-center gap-4'></div>
       </>
     );
   }

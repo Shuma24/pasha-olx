@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { BaseController } from '../abstract/repository.abstract';
 import type { ILoggerService } from '../common/logger-service/logger.service';
-import { CrossBody, CrossDeleteQuery } from './dto/cross.dto';
+import { CrossBody, CrossDeleteQuery, CrossListQuery } from './dto/cross.dto';
 import type { IFile } from '../common/storage-service/storage.service';
 import { IBotService } from '../bot/bot.service';
 import { IOlxService } from '../olx/olx.service';
@@ -47,6 +47,15 @@ export class CrossController extends BaseController {
         handler: this.deleteCross,
         schema: {
           querystring: CrossDeleteQuery,
+          tags: ['Cross'],
+        },
+      },
+      {
+        method: 'GET',
+        url: '/cross/list',
+        handler: this.getList,
+        schema: {
+          querystring: CrossListQuery,
           tags: ['Cross'],
         },
       },
@@ -189,8 +198,8 @@ export class CrossController extends BaseController {
     });
   }
 
-  async getList(request: FastifyRequest, reply: FastifyReply) {
-    const test = await this._crossService.getListTires();
+  async getList(request: FastifyRequest<{ Querystring: CrossListQuery }>, reply: FastifyReply) {
+    const test = await this._crossService.getListTires({ ...request.query });
 
     reply.code(200).send(test);
   }

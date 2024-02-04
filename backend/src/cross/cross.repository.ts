@@ -1,11 +1,11 @@
-import { IORMService } from '../common/orm/orm.service';
-import { ICross } from './entity/corss.entity';
+import type { IORMService } from '../common/orm/orm.service';
+import type { ICross } from './entity/corss.entity';
 
 export interface ICrossRepository {
   create(tiresId: number, olxId: number): Promise<ICross>;
   delete(id: number): Promise<ICross>;
   getByTiresId(id: number): Promise<ICross | null>;
-  getList(): Promise<{
+  getList(query: { pageSize: number; skipPage: number; search?: string }): Promise<{
     tires: ({
       tires: {
         id: number;
@@ -58,14 +58,23 @@ export class CrossRepository implements ICrossRepository {
     return cross;
   }
 
-  async getList() {
+  async getList(query: { pageSize: number; skipPage: number; search?: string }) {
     const tires = await this._ormService.client.crossIds.findMany({
+      take: query.pageSize,
+      skip: query.pageSize * query.skipPage,
       include: {
-        tires: true,
+        tires: {
+          include: {
+            images: true,
+          },
+        },
       },
       where: {
         tires: {
-          name: '',
+          name: {
+            contains: query.search,
+            mode: 'insensitive',
+          },
         },
       },
     });

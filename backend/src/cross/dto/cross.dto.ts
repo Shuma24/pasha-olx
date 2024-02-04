@@ -21,3 +21,11 @@ export const CrossDeleteQuery = Type.Object({
 export type CrossBody = Static<typeof CrossBody>;
 
 export type CrossDeleteQuery = Static<typeof CrossDeleteQuery>;
+
+export const CrossListQuery = Type.Object({
+  pageSize: Type.String(),
+  skipPage: Type.String(),
+  search: Type.Optional(Type.String()),
+});
+
+export type CrossListQuery = Static<typeof CrossListQuery>;
