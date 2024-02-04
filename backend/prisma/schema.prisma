@@ -26,12 +26,6 @@ model OlxCredetnials {
   adminId         Int      @unique
 }
 
-model OlxOauth {
-  id            Int    @id @default(autoincrement())
-  client_id     String
-  client_secret String
-}
-
 model Tires {
   id          Int       @id @default(autoincrement())
   images      Images[]
@@ -43,6 +37,7 @@ model Tires {
   type        String
   createdAt   DateTime? @default(now())
   updatedAt   DateTime? @updatedAt
+  crossIds    CrossIds?
 }
 
 model Images {
@@ -62,4 +57,13 @@ model Admins {
 model BlackList {
   id         Int @id @default(autoincrement())
   TelegramID Int
+}
+
+model CrossIds {
+  id      Int   @id @default(autoincrement())
+  tiresId Int   @unique
+  olxId   Int
+  tires   Tires @relation(fields: [tiresId], references: [id])
+
+  @@index([tiresId], name: "idx_cross_ids_tires_id")
 }

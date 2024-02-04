@@ -31,6 +31,8 @@ globalContainer.use(TOKENS.olxService).from(olxModule);
 globalContainer.use(TOKENS.olxRepository).from(olxModule);
 
 globalContainer.use(TOKENS.crossController).from(crossModule);
+globalContainer.use(TOKENS.crossService).from(crossModule);
+globalContainer.use(TOKENS.crossRepository).from(crossModule);
 
 globalContainer.use(TOKENS.botService).from(botModule);
 globalContainer.use(TOKENS.botRepository).from(botModule);

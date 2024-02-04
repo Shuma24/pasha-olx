@@ -9,6 +9,7 @@ export interface ITires {
   size: string;
   quantity: number;
   type: string;
+  crossId?: number;
   createdAt: Date | null;
   updatedAt: Date | null;
 }

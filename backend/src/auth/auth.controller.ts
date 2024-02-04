@@ -36,11 +36,6 @@ export class AuthController extends BaseController {
           tags: ['Auth'],
         },
       },
-      {
-        method: 'GET',
-        url: '/',
-        handler: this.test,
-      },
     ]);
   }
 
@@ -49,6 +44,7 @@ export class AuthController extends BaseController {
 
     if (!login || !password) {
       reply.code(400).send({ status: false, error: 'No password or login' });
+      return;
     }
 
     const ent = await this._authService.validate(login, password);
@@ -73,9 +69,5 @@ export class AuthController extends BaseController {
       status: false,
       error: 'Unauthorized',
     });
-  }
-
-  async test(request: FastifyRequest, reply: FastifyReply) {
-    reply.code(200).send('hello world');
   }
 }

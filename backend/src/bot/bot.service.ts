@@ -1,6 +1,5 @@
-import { IConfigService } from '../common/config-service/config.service';
 import type { ILoggerService } from '../common/logger-service/logger.service';
-import type { IFile, IStorage } from '../common/storage-service/storage.service';
+import type { IStorage } from '../common/storage-service/storage.service';
 import type { IBotRepository } from './bot.repository';
 import type { ITiresImages } from './entity/image.entity';
 import { TiresEntity, type ITires } from './entity/tires.entity';
@@ -25,7 +24,7 @@ export class BotService implements IBotService {
     private readonly _storageService: IStorage,
     private readonly _loggerService: ILoggerService,
   ) {
-    this._loggerService.info('ProductService initialized');
+    this._loggerService.info('BotService initialized');
   }
 
   async create(data: {

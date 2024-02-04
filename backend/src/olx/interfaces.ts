@@ -10,6 +10,14 @@ export interface IOlxAdvert {
   attributes: IOlxAttributes[];
 }
 
+export interface IOlxTokenResponse {
+  access_token: string;
+  expires_in: number;
+  token_type: string;
+  scope: string;
+  refresh_token: string;
+}
+
 export interface IOlxContact {
   name: string;
   phone?: string;

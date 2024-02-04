@@ -14,4 +14,10 @@ export const CrossBody = Type.Object({
   brand: Type.String(),
 });
 
+export const CrossDeleteQuery = Type.Object({
+  id: Type.String(),
+});
+
 export type CrossBody = Static<typeof CrossBody>;
+
+export type CrossDeleteQuery = Static<typeof CrossDeleteQuery>;

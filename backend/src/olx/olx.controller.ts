@@ -20,8 +20,8 @@ export class OlxController extends BaseController {
       },
       {
         method: 'GET',
-        url: '/olx/get',
-        handler: this.get,
+        url: '/olx/credentials',
+        handler: this.credentialsOlx,
         schema: {
           tags: ['Olx'],
         },
@@ -35,12 +35,20 @@ export class OlxController extends BaseController {
           tags: ['Olx'],
         },
       },
+      {
+        method: 'GET',
+        url: '/olx/refresh',
+        handler: this.refreshOlxToken,
+        schema: {
+          tags: ['Olx'],
+        },
+      },
     ]);
   }
 
   async callback(req: FastifyRequest<{ Body: callbackBodyDto }>, reply: FastifyReply) {
     if (!req.user || !req.user.id) {
-      reply.code(403).send({ status: false, error: 'Unauthorized' });
+      reply.code(401).send({ status: false, error: 'Unauthorized' });
       return;
     }
 
@@ -59,15 +67,15 @@ export class OlxController extends BaseController {
     reply.code(200).send({ status: true, cred: credentials });
   }
 
-  async get(req: FastifyRequest, reply: FastifyReply) {
+  async credentialsOlx(req: FastifyRequest, reply: FastifyReply) {
     if (!req.user || !req.user.id) {
-      reply.code(403).send({ status: false, error: 'Unauthorized' });
+      reply.code(401).send({ status: false, error: 'Unauthorized' });
       return;
     }
 
     const { id } = req.user;
 
-    const credentials = await this._olxService.get(id);
+    const credentials = await this._olxService.getCredentialsOlx(id);
 
     if (!credentials) {
       reply.code(400).send({ status: false, error: 'Problem with get olx' });
@@ -79,7 +87,7 @@ export class OlxController extends BaseController {
 
   async listOfAdverts(req: FastifyRequest<{ Querystring: getAdvertsQuery }>, reply: FastifyReply) {
     if (!req.user || !req.user.id) {
-      reply.code(403).send({ status: false, error: 'Unauthorized' });
+      reply.code(401).send({ status: false, error: 'Unauthorized' });
       return;
     }
 
@@ -95,5 +103,16 @@ export class OlxController extends BaseController {
     }
 
     reply.code(200).send(listOfAdverts);
+  }
+
+  async refreshOlxToken(req: FastifyRequest, reply: FastifyReply) {
+    if (!req.user || !req.user.id) {
+      reply.code(403).send({ status: false, error: 'No permission' });
+      return;
+    }
+
+    const newCred = await this._olxService.refresh(req.user.id);
+
+    reply.code(200).send(newCred);
   }
 }

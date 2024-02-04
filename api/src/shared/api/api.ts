@@ -181,7 +181,7 @@ export const TokenExchange = async (
 export const getOlxCredentials = async (options?: SecondParameter<typeof createInstance>) => {
   return createInstance<IOlxCredentialsResponse>(
     {
-      url: '/olx/get',
+      url: '/olx/credentials',
       method: 'get',
       headers: { 'Content-Type': 'application/json' },
     },

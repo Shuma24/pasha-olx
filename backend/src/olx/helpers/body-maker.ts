@@ -103,7 +103,7 @@ export const bodyMaker = (data: {
     category_id: 1459,
     advertiser_type: data.advertiser_type,
     contact: {
-      name: 'Pavel',
+      name: 'Павло',
     },
     location: {
       city_id: 176,

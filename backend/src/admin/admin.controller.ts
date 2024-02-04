@@ -29,12 +29,13 @@ export class AdminController extends BaseController {
 
   async updateAdmin(request: FastifyRequest<{ Body: updateAdminDTO }>, reply: FastifyReply) {
     if (!request.user?.id) {
-      reply.code(400).send({ status: false, error: 'bad request no admin credentials' });
+      reply.code(403).send({ status: false, error: 'No admin credentials' });
+      return;
     }
 
     const { login, password } = request.body;
 
-    const updatedUser = this._adminService.update(Number(request.user?.id), login, password);
+    const updatedUser = this._adminService.update(Number(request.user.id), login, password);
 
     if (!updatedUser) {
       reply.code(400).send({ status: false, error: 'Problem with update' });

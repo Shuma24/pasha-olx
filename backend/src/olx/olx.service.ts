@@ -1,12 +1,13 @@
+import { AxiosError } from 'axios';
 import type { IClientService } from '../common/client-service/client.service';
 import type { IConfigService } from '../common/config-service/config.service';
 import type { ILoggerService } from '../common/logger-service/logger.service';
 import type { IOlxCredentialsEntity } from './entity/olx.credentials.entity';
 import { bodyMaker } from './helpers/body-maker';
 import type {
-  IAdvertOlxResponse,
   IFinishedAdvertOlxResponse,
   IListOlxAdvertsResponse,
+  IOlxTokenResponse,
 } from './interfaces';
 import type { IOlxRepository } from './repository/olx.repository';
 
@@ -26,13 +27,15 @@ interface IOlxAvertData {
 
 export interface IOlxService {
   callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined>;
-  get(adminId: number): Promise<IOlxCredentialsEntity | null>;
-  createAdvert(data: IOlxAvertData, adminId: number): Promise<string | undefined>;
+  getCredentialsOlx(adminId: number): Promise<IOlxCredentialsEntity | null>;
+  createAdvert(data: IOlxAvertData, adminId: number): Promise<number>;
   listOfAdverts(
     adminId: number,
     page: number,
     limit: number,
   ): Promise<IListOlxAdvertsResponse | never[]>;
+  refresh(adminId: number): Promise<IOlxCredentialsEntity>;
+  delete(id: number, adminId: number): Promise<boolean>;
 }
 
 export class OlxService implements IOlxService {
@@ -41,35 +44,56 @@ export class OlxService implements IOlxService {
     private readonly _clientService: IClientService,
     private readonly _olxRepository: IOlxRepository,
     private readonly _loggerService: ILoggerService,
-  ) {}
+  ) {
+    this._loggerService.info('OlxService initialized');
+  }
 
-  async get(adminId: number) {
+  async getCredentialsOlx(adminId: number) {
     return await this._olxRepository.get({ adminId: Number(adminId) });
   }
 
   async listOfAdverts(adminId: number, page: number, limit: number) {
-    const cred = await this.get(adminId);
+    const cred = await this.getCredentialsOlx(adminId);
     if (!cred) throw new Error('Set olx credentials');
 
-    const { data } = await this._clientService.GET<IListOlxAdvertsResponse>(
-      'https://www.olx.ua/api/partner/adverts',
-      {
-        headers: {
-          Version: 'v2',
-          Authorization: `Bearer ${cred.olxToken}`,
+    try {
+      const { data } = await this._clientService.GET<IListOlxAdvertsResponse>(
+        'https://www.olx.ua/api/partner/adverts',
+        {
+          headers: {
+            Version: 'v2',
+            Authorization: `Bearer ${cred.olxToken}`,
+          },
+          params: {
+            offset: page,
+            limit: limit,
+          },
         },
-        params: {
-          offset: page,
-          limit: limit,
-        },
-      },
-    );
+      );
 
-    if (!data) {
-      throw new Error('Problem with fetch adverts check token life');
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const statusCode = error.response?.status;
+        const statusText = error.response?.statusText;
+
+        const errorMessage = `Error fetching OLX adverts: ${statusCode} ${statusText}`;
+
+        this._loggerService.error(errorMessage);
+
+        switch (statusCode) {
+          case 401:
+            throw new Error(`${errorMessage} - Unauthorized access. Please check credentials.`);
+          case 403:
+            throw new Error(`${errorMessage} - Forbidden access. Please check permissions.`);
+          default:
+            throw new Error(errorMessage);
+        }
+      } else {
+        this._loggerService.error(error);
+        throw new Error(`An unexpected error occurred: ${error.message}`);
+      }
     }
-
-    return data;
   }
 
   async callbackOlx(code: string, adminId: number): Promise<IOlxCredentialsEntity | undefined> {
@@ -78,7 +102,7 @@ export class OlxService implements IOlxService {
       const redirectUrl = this._configService.get('OLX_REDIRECT_URL');
       const clientSecret = this._configService.get('OLX_CLIENT_SECRET');
 
-      const { data } = await this._clientService.POST(
+      const { data } = await this._clientService.POST<IOlxTokenResponse>(
         'https://www.olx.ua/api/open/oauth/token',
         {
           grant_type: 'authorization_code',
@@ -116,15 +140,22 @@ export class OlxService implements IOlxService {
 
       return credentials;
     } catch (error) {
-      if (error instanceof Error) {
-        this._loggerService.error(error.message);
-        throw new Error(error.message);
+      if (error instanceof AxiosError) {
+        const statusCode = error.response?.status;
+        const statusText = error.response?.statusText;
+
+        const errorMessage = `Error fetching OLX adverts: ${statusCode} ${statusText}`;
+        this._loggerService.error(errorMessage);
+        throw new Error(errorMessage);
+      } else {
+        this._loggerService.error(error);
+        throw new Error(`An unexpected error occurred: ${error.message}`);
       }
     }
   }
 
   async createAdvert(data: IOlxAvertData, adminId: number) {
-    const cred = await this.get(adminId);
+    const cred = await this.getCredentialsOlx(adminId);
     if (!cred) throw new Error('Set olx credentials');
 
     const body = bodyMaker({
@@ -153,10 +184,111 @@ export class OlxService implements IOlxService {
         },
       );
 
-      return response.data.data.url;
+      return response.data.data.id;
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(error.message);
+      if (error instanceof AxiosError) {
+        const statusCode = error.response?.status;
+        const statusText = error.response?.statusText;
+
+        const errorMessage = `Error fetching OLX adverts: ${statusCode} ${statusText}`;
+        this._loggerService.error(errorMessage);
+
+        switch (statusCode) {
+          case 401:
+            throw new Error(`${errorMessage} - Unauthorized access. Please check credentials.`);
+          case 403:
+            throw new Error(`${errorMessage} - Forbidden access. Please check permissions.`);
+          default:
+            throw new Error(errorMessage);
+        }
+      } else {
+        this._loggerService.error(error);
+        throw new Error(`An unexpected error occurred: ${error.message}`);
+      }
+    }
+  }
+
+  async refresh(adminId: number) {
+    const clientId = this._configService.get('OLX_CLIENT_ID');
+    const clientSecret = this._configService.get('OLX_CLIENT_SECRET');
+
+    try {
+      const olxCred = await this._olxRepository.get({ adminId: adminId });
+
+      if (!olxCred) throw new Error('No olx credential in db');
+
+      const { data } = await this._clientService.POST<IOlxTokenResponse>(
+        'https://www.olx.ua/api/open/oauth/token',
+        {
+          grant_type: 'refresh_token',
+          client_id: clientId,
+          client_secret: clientSecret,
+          refresh_token: olxCred.olxRefreshToken,
+        },
+      );
+
+      const newCred = await this._olxRepository.update(
+        {
+          olxToken: data.access_token,
+          olxRefreshToken: data.refresh_token,
+          expires_in: data.expires_in.toString(),
+          adminId: olxCred.adminId,
+        },
+        olxCred.id,
+      );
+
+      if (!newCred) throw new Error('Error set refreshed olx cred to db');
+
+      return newCred;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const statusCode = error.response?.status;
+        const statusText = error.response?.statusText;
+
+        const errorMessage = `Error fetching OLX adverts: ${statusCode} ${statusText}`;
+        this._loggerService.error(errorMessage);
+
+        throw new Error(errorMessage);
+      } else {
+        this._loggerService.error(error);
+        throw new Error(`An unexpected error occurred: ${error.message}`);
+      }
+    }
+  }
+
+  async delete(id: number, adminId: number) {
+    try {
+      const olxCred = await this._olxRepository.get({ adminId: adminId });
+
+      if (!olxCred) throw new Error('No olx credential in db');
+
+      const response = await this._clientService.DELETE(
+        `https://www.olx.ua/api/partner/adverts/${id}`,
+        {
+          headers: {
+            Version: 'v2',
+            Authorization: `Bearer ${olxCred.olxToken}`,
+          },
+        },
+      );
+
+      if (response.status === 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const statusCode = error.response?.status;
+        const statusText = error.response?.statusText;
+
+        const errorMessage = `Error fetching OLX adverts: ${statusCode} ${statusText}`;
+        this._loggerService.error(errorMessage);
+
+        throw new Error(errorMessage);
+      } else {
+        this._loggerService.error(error);
+        throw new Error(`An unexpected error occurred: ${error.message}`);
       }
     }
   }
