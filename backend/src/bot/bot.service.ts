@@ -70,6 +70,9 @@ export class BotService implements IBotService {
   async createImage(images: Buffer[], tiresID: number): Promise<{ url: string }[] | undefined> {
     try {
       const uploadedImages: ITiresImages[] = [];
+
+      console.log(images);
+
       for (const image of images) {
         const uploadedPhoto = await this._storageService.handleFile({
           data: image,
