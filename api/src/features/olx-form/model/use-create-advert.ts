@@ -1,11 +1,9 @@
+import { createCrossAdvert } from '@/src/shared/api/api';
+import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 
 export function useSignInForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<{
+  const { register, handleSubmit } = useForm<{
     images: File[];
     title: string;
     description: string;
@@ -19,19 +17,36 @@ export function useSignInForm() {
     brand: string;
   }>({ shouldUseNativeValidation: true });
 
-  /*   const signInMutation = useMutation({
-    mutationFn: authControllerSignIn,
-    onSuccess(data: { status: boolean; access_token: string }) {
-      setAccessTokenToStorage(data.access_token);
-      router.push(ROUTER_PATHS.HOME);
-    },
-  }); */
+  const createAdvertMutation = useMutation({
+    mutationFn: createCrossAdvert,
+  });
 
-  //const errorMessage = signInMutation.error ? 'Create advert error' : undefined;
+  const errorMessage = createAdvertMutation.error ? 'Create advert error' : undefined;
 
   return {
     register,
-    handleSubmit: handleSubmit((data) => console.log(data)),
-    errors,
+    errorMessage,
+    handleSubmit: handleSubmit((data) => {
+      const formData = new FormData();
+
+      formData.append('title', data.title);
+      formData.append('description', data.description);
+      formData.append('advertiserType', data.advertiserType);
+      formData.append('price', data.price);
+      formData.append('size', data.size);
+      formData.append('type', data.type);
+      formData.append('quantity', data.quantity);
+      formData.append('year', data.year);
+      formData.append('state', data.state);
+      formData.append('brand', data.brand);
+
+      for (let i = 0; i < data.images.length; i++) {
+        formData.append('images', data.images[i]);
+      }
+
+      return createAdvertMutation.mutate(formData);
+    }),
+    loading: createAdvertMutation.isPending,
+    data: createAdvertMutation.data,
   };
 }

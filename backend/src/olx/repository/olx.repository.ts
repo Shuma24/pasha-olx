@@ -30,6 +30,8 @@ export class olxRepository implements IOlxRepository {
       data: updateSettings,
     });
 
+    await this._ormService.client.$disconnect();
+
     return updatedOlxCred;
   }
 

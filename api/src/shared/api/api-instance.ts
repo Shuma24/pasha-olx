@@ -1,7 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
-export const clearApiInstance = axios.create();
-
 export const apiInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   withCredentials: true,

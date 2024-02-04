@@ -21,6 +21,8 @@ export class AdminRepository implements IAdminRepository {
       data: updateSettings,
     });
 
+    await this._ormService.client.$disconnect();
+
     return updatedAdmin;
   }
 
@@ -40,6 +42,8 @@ export class AdminRepository implements IAdminRepository {
     const admin = await this._ormService.client.apiAdmin.findFirst({
       where: settings,
     });
+
+    await this._ormService.client.$disconnect();
 
     return admin;
   }

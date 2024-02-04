@@ -6,4 +6,4 @@ export const crossModule = new DependencyModule();
 
 crossModule.bind(TOKENS.crossController).toInstance(CrossController).inTransientScope();
 
-injected(CrossController, TOKENS.loggerService, TOKENS.botService);
+injected(CrossController, TOKENS.loggerService, TOKENS.botService, TOKENS.olxService);

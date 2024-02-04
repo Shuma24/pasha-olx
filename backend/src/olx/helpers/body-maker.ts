@@ -1,6 +1,6 @@
 import { IOlxAdvert, IOlxAttributes, IOlxImages } from '../interfaces';
 
-const bodyMaker = (data: {
+export const bodyMaker = (data: {
   title: string;
   description: string;
   advertiser_type: 'private' | 'business';
@@ -23,15 +23,15 @@ const bodyMaker = (data: {
   switch (data.type) {
     case 'summer':
       fixedType = '1';
-      return;
+      break;
 
     case 'winter':
       fixedType = '2';
-      return;
+      break;
 
     case 'allseason':
       fixedType = '3';
-      return;
+      break;
 
     default:
       break;
@@ -40,15 +40,15 @@ const bodyMaker = (data: {
   switch (data.quantity) {
     case 1:
       fixedQuantity = '1_tire_unpaired';
-      return;
+      break;
 
     case 2:
       fixedQuantity = 'pair';
-      return;
+      break;
 
     case 4:
       fixedType = 'set_of_4';
-      return;
+      break;
 
     default:
       break;

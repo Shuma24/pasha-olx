@@ -81,3 +81,7 @@ export interface IAdvertOlxResponse {
   }[];
   courier: null | any;
 }
+
+export interface IListOlxAdvertsResponse {
+  data: IAdvertOlxResponse[];
+}

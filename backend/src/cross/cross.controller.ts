@@ -4,6 +4,7 @@ import type { ILoggerService } from '../common/logger-service/logger.service';
 import { CrossBody } from './dto/cross.dto';
 import type { IFile } from '../common/storage-service/storage.service';
 import { IBotService } from '../bot/bot.service';
+import { IOlxService } from '../olx/olx.service';
 
 type CrossBodyReq = {
   files: IFile[];
@@ -20,7 +21,11 @@ type CrossBodyReq = {
 };
 
 export class CrossController extends BaseController {
-  constructor(_loggerService: ILoggerService, private readonly _botService: IBotService) {
+  constructor(
+    _loggerService: ILoggerService,
+    private readonly _botService: IBotService,
+    private readonly _olxService: IOlxService,
+  ) {
     super(_loggerService);
 
     this.bindRoutes(this, [
@@ -38,6 +43,10 @@ export class CrossController extends BaseController {
   }
 
   async createCross(request: FastifyRequest<{ Body: CrossBodyReq }>, reply: FastifyReply) {
+    if (!request.user) throw new Error('Authorize!');
+
+    const { id } = request.user;
+
     const {
       title,
       type,
@@ -73,6 +82,31 @@ export class CrossController extends BaseController {
       return;
     }
 
-    return reply.code(200).send(request.body);
+    const createOlxAdvert = await this._olxService.createAdvert(
+      {
+        title: title,
+        type: type,
+        description: description,
+        price: price,
+        quantity: quantity,
+        files: tiresImages,
+        advertiserType: advertiserType as 'private' | 'business',
+        size: size,
+        year: year,
+        state: state,
+        brand: brand,
+      },
+      id,
+    );
+
+    if (!createOlxAdvert) {
+      reply.code(404).send({ status: false, error: 'Problem with upload olx' });
+      return;
+    }
+
+    return reply.code(200).send({
+      olxUrl: createOlxAdvert,
+      botId: tires.id,
+    });
   }
 }

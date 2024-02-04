@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { BaseController } from '../abstract/repository.abstract';
 import type { ILoggerService } from '../common/logger-service/logger.service';
-import { callbackBodyDto } from './dto/olx.dto';
+import { callbackBodyDto, getAdvertsQuery } from './dto/olx.dto';
 import { IOlxService } from './olx.service';
 
 export class OlxController extends BaseController {
@@ -23,6 +23,15 @@ export class OlxController extends BaseController {
         url: '/olx/get',
         handler: this.get,
         schema: {
+          tags: ['Olx'],
+        },
+      },
+      {
+        method: 'GET',
+        url: '/olx/adverts',
+        handler: this.listOfAdverts,
+        schema: {
+          querystring: getAdvertsQuery,
           tags: ['Olx'],
         },
       },
@@ -66,5 +75,25 @@ export class OlxController extends BaseController {
     }
 
     reply.code(200).send(credentials);
+  }
+
+  async listOfAdverts(req: FastifyRequest<{ Querystring: getAdvertsQuery }>, reply: FastifyReply) {
+    if (!req.user || !req.user.id) {
+      reply.code(403).send({ status: false, error: 'Unauthorized' });
+      return;
+    }
+
+    const { page, limit } = req.query;
+
+    const { id } = req.user;
+
+    const listOfAdverts = await this._olxService.listOfAdverts(id, Number(page), Number(limit));
+
+    if (!listOfAdverts) {
+      reply.code(400).send({ status: false, error: 'Problem with get olx adverts' });
+      return;
+    }
+
+    reply.code(200).send(listOfAdverts);
   }
 }
