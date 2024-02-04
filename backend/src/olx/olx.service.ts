@@ -3,7 +3,11 @@ import type { IConfigService } from '../common/config-service/config.service';
 import type { ILoggerService } from '../common/logger-service/logger.service';
 import type { IOlxCredentialsEntity } from './entity/olx.credentials.entity';
 import { bodyMaker } from './helpers/body-maker';
-import type { IAdvertOlxResponse, IListOlxAdvertsResponse } from './interfaces';
+import type {
+  IAdvertOlxResponse,
+  IFinishedAdvertOlxResponse,
+  IListOlxAdvertsResponse,
+} from './interfaces';
 import type { IOlxRepository } from './repository/olx.repository';
 
 interface IOlxAvertData {
@@ -138,7 +142,7 @@ export class OlxService implements IOlxService {
     });
 
     try {
-      const response = await this._clientService.POST<IAdvertOlxResponse>(
+      const response = await this._clientService.POST<IFinishedAdvertOlxResponse>(
         'https://www.olx.ua/api/partner/adverts',
         body,
         {
@@ -149,7 +153,7 @@ export class OlxService implements IOlxService {
         },
       );
 
-      return response.data.url;
+      return response.data.data.url;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
