@@ -60,7 +60,6 @@ export class AuthController extends BaseController {
   }
 
   async me(request: FastifyRequest<{ Body: loginDTO }>, reply: FastifyReply) {
-    console.log(request.user);
     if (request.user) {
       reply.code(200).send(request.user);
     }

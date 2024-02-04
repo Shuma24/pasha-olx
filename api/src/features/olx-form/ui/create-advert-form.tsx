@@ -18,7 +18,9 @@ export const CreateAdvertForm = () => {
     <>
       {data && (
         <div className='mb-10'>
-          created {data.botId} and {data.olxUrl}
+          <span className='text-lime-500 text-base'>
+            SUCCESS! created {data.olxId} and {data.tiresId}
+          </span>
         </div>
       )}
 

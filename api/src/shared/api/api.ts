@@ -109,8 +109,9 @@ interface IAttribute {
 }
 
 interface ICreateAdvertResponse {
-  olxUrl: string;
-  botId: number;
+  id: number;
+  olxId: string;
+  tiresId: number;
 }
 
 type SecondParameter<T extends (...args: any) => any> = T extends (

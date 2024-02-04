@@ -44,7 +44,7 @@ export class CrossController extends BaseController {
       {
         method: 'DELETE',
         url: '/cross/delete',
-        handler: this.createCross,
+        handler: this.deleteCross,
         schema: {
           querystring: CrossDeleteQuery,
           tags: ['Cross'],
@@ -74,8 +74,6 @@ export class CrossController extends BaseController {
       state,
       brand,
     } = request.body;
-
-    console.log(files[0]);
 
     const tires = await this._botService.create({
       title: title,
@@ -131,7 +129,7 @@ export class CrossController extends BaseController {
     }
 
     return reply.code(200).send({
-      olxUrl: createOlxAdvert,
+      olxId: createOlxAdvert,
       tiresId: tires.id,
       crossId: crossEntity.id,
     });
@@ -157,8 +155,19 @@ export class CrossController extends BaseController {
       return;
     }
 
+    const tireId = cross.tiresId;
+    const olxId = cross.olxId;
+
+    //delete cross
+    const result = await this._crossService.delete(Number(id));
+
+    if (!result) {
+      reply.code(400).send({ status: false, message: 'Error delete cross' });
+      return;
+    }
+
     //bot delete
-    const deleteTiresBotResult = await this._botService.delete(cross.tiresId);
+    const deleteTiresBotResult = await this._botService.delete(tireId);
 
     if (!deleteTiresBotResult) {
       reply.code(400).send({ status: false, message: 'Problem to delete bot tires from cross' });
@@ -167,18 +176,10 @@ export class CrossController extends BaseController {
 
     //olx delete
 
-    const deleteOlxResult = await this._olxService.delete(cross.olxId, request.user.id);
+    const deleteOlxResult = await this._olxService.delete(olxId, request.user.id);
 
     if (!deleteOlxResult) {
       reply.code(400).send({ status: false, message: 'Problem to delete olx advert from cross' });
-      return;
-    }
-
-    //kill cross
-    const result = await this._crossService.delete(Number(id));
-
-    if (!result) {
-      reply.code(400).send({ status: false, message: 'Error delete cross' });
       return;
     }
 
