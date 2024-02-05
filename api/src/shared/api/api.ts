@@ -225,6 +225,17 @@ export const getOlxCredentials = async (options?: SecondParameter<typeof createI
   );
 };
 
+export const refreshOlxToken = async (options?: SecondParameter<typeof createInstance>) => {
+  return createInstance<IOlxCredentialsResponse>(
+    {
+      url: '/olx/refresh',
+      method: 'get',
+      headers: { 'Content-Type': 'application/json' },
+    },
+    options,
+  );
+};
+
 export const getAdverts = async (
   params: { page: number; limit: number },
   options?: SecondParameter<typeof createInstance>,
@@ -248,6 +259,21 @@ export const getTires = async (
     {
       url: '/cross/list',
       method: 'get',
+      headers: { 'Content-Type': 'application/json' },
+      params: params,
+    },
+    options,
+  );
+};
+
+export const deleteTires = async (
+  params: { id: number },
+  options?: SecondParameter<typeof createInstance>,
+) => {
+  return createInstance<boolean>(
+    {
+      url: '/cross/delete',
+      method: 'delete',
       headers: { 'Content-Type': 'application/json' },
       params: params,
     },

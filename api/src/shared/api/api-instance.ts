@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { refreshOlxToken } from './api';
 
 export const apiInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -20,6 +21,37 @@ apiInstance.interceptors.request.use(
   },
   (error) => {
     return error;
+  },
+);
+
+apiInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (!error.config || !error.response) {
+      return Promise.reject(error);
+    }
+
+    const originalRequest = error.config;
+
+    // Перевіряємо, чи URL запиту містить '/olx/'
+    if (
+      error.response.status === 401 &&
+      originalRequest.url.includes('/olx/') &&
+      originalRequest.url.includes('/cross/') &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        await refreshOlxToken();
+
+        return apiInstance(originalRequest);
+      } catch (refreshError) {
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
   },
 );
 
